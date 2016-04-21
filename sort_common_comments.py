@@ -19,7 +19,7 @@ import os
 
 pc_file     ="data/2016_PCs_txt.xlsx"
 team_file   ="data/2016_Team_txt.xlsx"
-outfolder   ="./images/common/"
+outfolder   ="./txt/common/"
 q_file      = dict(
                 io  = "data/2016/Questions.xls",
                 sheetname = "common" )
@@ -35,22 +35,28 @@ questions["qnTeam"]   = questions.Team.apply(lambda x: str(x).split(":")[0]+":")
 
 num_questions = questions[questions.Type != "Comments"]
 ratings = num_questions[questions.Type == "Rating"]
+comments = questions[questions.Type == "Comments"]
 
 data = definePCgroup(data, col_name="group")
 
 #ws = data.groupby(searchKeyByRegex(data, "Q21:"))
 
-for q_pc, q_team, q_type in zip(ratings.qnPc, ratings.qnTeam, ratings.Type):
+for q_pc, q_team, q_type in zip(comments.qnPc, comments.qnTeam, comments.Type):
 #print(q_pc, q_team, q_type)
     pc_key = searchKeyByRegex(data, q_pc)
     team_key = searchKeyByRegex(team_data, q_team)
-#print(pc_key, team_key, q_type)"_"
-#data["cat"+pc_key] = pd.Categorical(data[pc_key].dropna(), categories=rating_categories)
-    fig = plotStackedRating(data, team_data, pc_key, team_key, rating_categories, group_name="group")
-    filename = str(q_pc).split(sep=":")[0]
-    print(filename)
-    fig.savefig(os.path.join(outfolder,filename+".png"), dpi=300, transparent=True)
-    plt.close()
+
+    pc_folder   = os.path.join(outfolder, "pcs")
+    team_folder = os.path.join(outfolder, "team")
+
+    ensureDir(pc_folder)
+    ensureDir(team_folder)
+
+    group_key = searchKeyByRegex(team_data, "Q1")
+
+    writeSortedQuestionToTxt(data, pc_key, pc_folder, groups="group")
+    writeSortedQuestionToTxt(team_data, team_key, team_folder, groups=group_key)
+
 
 
 #
