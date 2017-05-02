@@ -26,4 +26,8 @@ setup(
         'tables',  # pytables in anaconda
     ],
     zip_safe=False,
+    entry_points={
+        'console_scripts': [
+            'imwe_eval_extract_comments = eval_tools.scripts.extractComments:main',
+        ],
 )
