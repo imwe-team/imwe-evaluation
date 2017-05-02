@@ -1,11 +1,10 @@
-from __future__ import print_function, division
-
 from os import path
 import codecs
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import math
+import re
 from matplotlib.backends.backend_pdf import PdfPages
 
 def printFirstKLines(filepath, k=1):
@@ -27,6 +26,9 @@ def getRatingKeys(questionNr, firstNum=1, nMax=6):
 
 def getRatingForQuestion(qNr, dataFrame):
     return dataFrame[getRatingKeys(qNr)]
+
+def getQNumber(question):
+    return str(question).split(sep=":")[0]
 
 def histogramQuestionRating(keys, dataFrame):
     if not keys:
@@ -58,7 +60,9 @@ def searchKeyByRegex(data, regex):
 def countValuesByOccurency(data):
     return data.value_counts()
 
-def correctGenders(data, key):
+def correctGenders(data, key=None):
+    if key == None:
+        key = data.filter(regex='gender').keys()[0]
     data['female'] = np.logical_or(data[key].str.contains('f'), data[key].str.contains('w'))
     data.loc[data['female'] == True, key] = "female"
     data.loc[data['female'] == False, key] = "male"
@@ -81,3 +85,12 @@ def getGroupedCategories(data, key, group_name):
         categories[name] = categories[name].value_counts()
     categories = pd.DataFrame(categories)
     return categories
+
+def convertNanToStr(categories):
+    for k, cat in enumerate(categories):
+        if str(cat) == 'nan':
+            categories[k]='nan'
+    return categories
+
+def shortenWhitespace(txt):
+    return re.sub( '\s\s+', '; ', txt ).strip()
