@@ -78,7 +78,7 @@ def writePcCommentsToFile(data, key, f_file, groups="group"):
             f_file.write(("\n\n"+str(pc_group)+":"))
             for comment in comments:
                 comment = shortenWhitespace(comment)
-                f_file.write(("\n* "+comment))
+                f_file.write(("\n"+comment))
 
 def writeTeamCommentsToFile(data, key, f_file):
     '''
