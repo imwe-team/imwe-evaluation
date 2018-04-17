@@ -24,10 +24,13 @@ setup(
         'setuptools',
         'pandas',
         'tables',  # pytables in anaconda
+        'click'
     ],
     zip_safe=False,
     entry_points={
         'console_scripts': [
             'imwe_eval_extract_comments = eval_tools.scripts.extractComments:main',
+            'imwe_eval_extract_ws_comments = eval_tools.scripts.extractWsComments:main',
         ],
+        }
 )

@@ -7,6 +7,8 @@ import math
 import re
 from matplotlib.backends.backend_pdf import PdfPages
 
+from eval_tools import *
+import eval_tools as et
 def printFirstKLines(filepath, k=1):
     f = codecs.open(filepath, "r", "utf-16")
     lines = f.readlines()
@@ -81,7 +83,7 @@ def getGroupedCategories(data, key, group_name):
     grouped = data.groupby(group_name)[key]
     categories = dict()
     for name,group in grouped:
-        categories[name] = pd.Categorical(group.dropna(), categories=rating_categories)
+        categories[name] = pd.Categorical(group.dropna(), categories=et.rating_categories)
         categories[name] = categories[name].value_counts()
     categories = pd.DataFrame(categories)
     return categories
