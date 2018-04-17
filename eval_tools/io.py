@@ -7,7 +7,7 @@ import math
 import re
 from matplotlib.backends.backend_pdf import PdfPages
 
-from eval_tools.tools import getQNumber, convertNanToStr, shortenWhitespace
+from eval_tools.tools import getQNumber, convertNanToStr, shortenWhitespace, searchKeyByRegex
 
 def readTxtExcelFileToDf(path, droprow=0, **kwargs):
     df = pd.read_excel(path, **kwargs)
@@ -19,7 +19,7 @@ def readNumExcelFileToDf(path, **kwargs):
     return df
 
 def readConfigXlsxToDf(path, sheetname="Common", **kwargs):
-    df = pd.read_excel(path, sheetname=sheetname, **kwargs)
+    df = pd.read_excel(path, sheet_name=sheetname, **kwargs)
     return df
 
 def writeSortedQuestionsToTxt(data, questions, outfolder, groups="group"):
@@ -84,7 +84,8 @@ def writeTeamCommentsToFile(data, key, f_file):
     '''
     Write the given Team comments to the given file
     '''
-    name_question = 'Q1: What is your name?'
+    name_question = searchKeyByRegex(data, "Q1")
+    # searchKeyByRegex(data, "Q1")
     names = data[name_question].unique()
     f_file.write("\n\nTeam Answers:")
     for name in sorted(names):
