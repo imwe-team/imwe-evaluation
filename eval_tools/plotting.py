@@ -2,14 +2,25 @@ from __future__ import print_function, division
 
 from os import path
 import codecs
+# import matplotlib
+# matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import numpy as np
 import pandas as pd
 import math
 from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib as mpl
 
+from eval_tools.tools import *
+
 cmap = mpl.cm.get_cmap('Set1')
+
+age_categories=['< 18', '18-25', '26-30', '> 30']
+
+rating_categories = ['Very good', 'Good', 'Okay', 'Not so good', 'Bad']
+
+binary_categories=['Yes', 'No']
 
 def autolabel(rects):
     # attach some text labels
@@ -251,9 +262,9 @@ def plotCategorizedIndexDf(data, key, title = "source"):
     autolabel(rects, ax)
 
     ax.set_ylim([0,60])
-    setAxesFont(ax, prop)
+    setAxesFont(ax, et.prop)
     setLines(ax)
-    ax.set_title("PARTICIPANTS", fontproperties=prop, fontsize=22)
+    ax.set_title("PARTICIPANTS", fontproperties=et.prop, fontsize=22)
 
     pos1 = ax.get_position() # get the original position
     ax.set_position([pos1.x0, pos1.y0+0.2,  pos1.width, pos1.height/ 1.3]) # set a new position
@@ -273,21 +284,22 @@ def plotStackedRating(data, team_data, pc_key, team_key, rating_categories, grou
 
     ax1 = plt.subplot(gs[0:2,0])
     categories.plot(kind="bar", stacked=True, ax=ax1, rot=0,alpha=0.8,cmap=cmap)
-    ax1.set_ylim([0,60])
-    setAxesFont(ax1, prop)
+    # ax1.set_ylim([0,60])
+    setAxesFont(ax1, et.prop)
     setLines(ax1)
-    ax1.set_title("PARTICIPANTS", fontproperties=prop, fontsize=22)
+    ax1.set_title("PARTICIPANTS", fontproperties=et.prop, fontsize=22)
 
-    team_cat = pd.Categorical(team_data[team_key].dropna(), categories=rating_categories)
-    team_cat = pd.DataFrame(team_cat.value_counts())
+    if len(team_data) > 0:
+        team_cat = pd.Categorical(team_data[team_key].dropna(), categories=rating_categories)
+        team_cat = pd.DataFrame(team_cat.value_counts())
 
-    ax2 = plt.subplot(gs[2,0], sharex=ax1)
-    team_cat.plot(kind="bar", ax=ax2, rot=0,alpha=0.8, color=cmap(0.2))
-    ax2.set_ylim([0,20])
-    setAxesFont(ax2, prop)
-    setLines(ax2)
-    ax2.set_title("TEAM", fontproperties=prop, fontsize=22)
-    ax2.legend().set_visible(False)
+        ax2 = plt.subplot(gs[2,0], sharex=ax1)
+        team_cat.plot(kind="bar", ax=ax2, rot=0,alpha=0.8, color=cmap(0.2))
+        # ax2.set_ylim([0,20])
+        setAxesFont(ax2, et.prop)
+        setLines(ax2)
+        ax2.set_title("TEAM", fontproperties=et.prop, fontsize=22)
+        ax2.legend().set_visible(False)
     return fig
 
 def autolabel(rects, ax):
@@ -298,7 +310,7 @@ def autolabel(rects, ax):
             continue
         ax.text(rect.get_x() + rect.get_width()/2., height+0.1*np.log(height+1),
                 '%d' % int(height),
-                ha='center', va='bottom', fontproperties=prop)
+                ha='center', va='bottom', fontproperties=et.prop)
 
 def plotHistogram(data, key):
 
@@ -318,9 +330,9 @@ def plotHistogram(data, key):
     autolabel(rects, ax1)
 
     ax1.set_ylim([0,30])
-    setAxesFont(ax1, prop)
+    setAxesFont(ax1, et.prop)
     setLines(ax1)
-    ax1.set_title("PARTICIPANTS", fontproperties=prop, fontsize=22)
+    ax1.set_title("PARTICIPANTS", fontproperties=et.prop, fontsize=22)
 
     return fig
 
@@ -338,9 +350,9 @@ def plotCategories(data, key, categories=['< 18', '18-25', '26-30', '> 30']):
     autolabel(rects, ax)
 
     ax.set_ylim([0,60])
-    setAxesFont(ax, prop)
+    setAxesFont(ax, et.prop)
     setLines(ax)
-    ax.set_title("PARTICIPANTS", fontproperties=prop, fontsize=22)
+    ax.set_title("PARTICIPANTS", fontproperties=et.prop, fontsize=22)
 
     return fig
     #plt.title(data.key())
@@ -389,20 +401,20 @@ def plotPyChart(sizes ,labels, title):
 
     # Set aspect ratio to be equal so that pie is drawn as a circle.
     ax.axis('equal')
-    ax.set_title(title, y=1.06, fontdict = {'verticalalignment': 'bottom'}, fontproperties=prop, fontsize=22)
-    plt.setp(autotexts, fontproperties=prop)
-    plt.setp(texts, fontproperties=prop)
-    setAxesFont(ax, prop)
-    ax.legend(prop=prop, labels=labels, loc="best")
+    ax.set_title(title, y=1.06, fontdict = {'verticalalignment': 'bottom'}, fontproperties=et.prop, fontsize=22)
+    plt.setp(autotexts, fontproperties=et.prop)
+    plt.setp(texts, fontproperties=et.prop)
+    setAxesFont(ax, et.prop)
+    ax.legend(prop=et.prop, labels=labels, loc="best")
 
     return fig
 
 def setAxesFont(ax, prop, leg_loc='upper right'):
-    ax.legend(loc=leg_loc, prop=prop)
-    ax.xaxis.get_label().set_fontproperties(prop)
-    ax.yaxis.get_label().set_fontproperties(prop)
+    ax.legend(loc=leg_loc, prop=et.prop)
+    ax.xaxis.get_label().set_fontproperties(et.prop)
+    ax.yaxis.get_label().set_fontproperties(et.prop)
     for label in (ax.get_xticklabels() + ax.get_yticklabels()):
-        label.set_fontproperties(prop)
+        label.set_fontproperties(et.prop)
     return ax
 
 def setLines(ax):
